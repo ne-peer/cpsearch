@@ -2,6 +2,7 @@ const puppeteer = require("puppeteer");
 const cheerio = require("cheerio");
 const cac = require("cac");
 const cli = cac();
+const config = require("./config.json");
 
 const SEARCH_URL_IMAGE = "https://www.pixiv.net/search.php?word=";
 const SEARCH_URL_NOVEL = "https://www.pixiv.net/novel/search.php?word=";
@@ -39,15 +40,19 @@ const scrapingResultCount = async html => {
 /**
  * 検索を実行して結果件数を出力
  */
-const search = () => {
+const search = config => {
   (async () => {
-      const word = "roselia";
-      const host = SEARCH_URL_NOVEL;
+    const words = config.words;
+    const host = config.type_novel === true ? SEARCH_URL_NOVEL : SEARCH_URL_IMAGE;
+    const type = config.type_novel === true ? "Novels" : "Pictures";
 
-    const html = await crawler(word, host);
-    const count = await scrapingResultCount(html);
+    for (const word of words) {
+      const html = await crawler(word, host);
+      const count = await scrapingResultCount(html);
+      await console.log(`${type} count of "${word}" : ${count}`);
+    }
 
-    console.log("result count = " + count);
+    console.log("terminated.");
   })().catch(err => {
     console.log("ERROR!! ===============\n" + err);
   });
@@ -59,10 +64,10 @@ const search = () => {
 cli.command(
   "run",
   {
-    desc: "Get CP seach result count on pixiv then export result file."
+    desc: "Get CP seach result count on pixiv. Require search words setting of config.json file."
   },
   () => {
-    search();
+    search(config);
   }
 );
 
