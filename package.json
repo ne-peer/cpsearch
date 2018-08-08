@@ -1,0 +1,24 @@
+{
+  "name": "cpsearch",
+  "version": "1.0.0",
+  "description": "Get CP seach result count on pixiv then export result file.",
+  "main": "cpsearch.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ne-peer/cpsearch.git"
+  },
+  "author": "mileage0110@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ne-peer/cpsearch/issues"
+  },
+  "homepage": "https://github.com/ne-peer/cpsearch#readme",
+  "dependencies": {
+    "cac": "^5.0.10",
+    "cheerio": "^1.0.0-rc.2",
+    "puppeteer": "^1.6.2"
+  }
+}
