@@ -1,7 +1,7 @@
 {
   "name": "cpsearch",
   "version": "1.0.0",
-  "description": "Get CP seach result count on pixiv.",
+  "description": "Get search result count on pixiv.",
   "main": "cpsearch.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

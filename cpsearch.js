@@ -6,6 +6,7 @@ const config = require("./config.json");
 
 const SEARCH_URL_IMAGE = "https://www.pixiv.net/search.php?word=";
 const SEARCH_URL_NOVEL = "https://www.pixiv.net/novel/search.php?word=";
+const LOGIN_URL = "https://accounts.pixiv.net/login";
 
 /**
  * クローラ
@@ -15,17 +16,30 @@ const SEARCH_URL_NOVEL = "https://www.pixiv.net/novel/search.php?word=";
 const crawler = {
   open: async () => {
     // "--no-sandbox"で実行: https://github.com/GoogleChrome/puppeteer/issues/290
-    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
-    this.browser = await browser.newPage();
-    await console.log("Process: Browser openned.");
+    this.browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox"] });
+    this.page = await this.browser.newPage();
+    await console.log("Process: Background browser started.");
   },
   close: async () => {
     await this.browser.close();
-    await console.log("Process: Browser closed.");
+    await console.log("Process: Background browser closed.");
+  },
+  login: async config => {
+    await console.log(`Process: Openning.. ${LOGIN_URL}`);
+    await this.page.goto(LOGIN_URL);
+    
+    await console.log(`Process: Login user = ${config.account.user}`);
+    await this.page.type('#container-login input[autocomplete="username"]', config.account.user);
+    await this.page.type('#container-login input[autocomplete="current-password"]', config.account.pw);
+
+    await this.page.click('#container-login button[type=submit]');
+    await console.log(`Process: Waiting login..`);
+    await this.page.waitFor(3000);
   },
   search: async (keyword, searchHost) => {
-    await this.browser.goto(searchHost + keyword);
-    return await this.browser.$eval("html", elem => elem.innerHTML);
+    await this.page.goto(searchHost + keyword);
+    const html = await this.page.$eval("html", elem => elem.innerHTML);
+    return await scrapingResultCount(html);
   }
 };
 
@@ -52,30 +66,40 @@ const search = config => {
 
     // starting headless browser
     await crawler.open();
+    if (config.view_r_ratio === true) {
+      await crawler.login(config);
+    }
 
     for (const word of words) {
-      const html = await crawler.search(word, host);
-      const count = await scrapingResultCount(html);
+      const count = await crawler.search(word, host);
       await console.log(`${type} count of "${word}" = ${count}`);
+
+      if (config.view_r_ratio === true) {
+        const wordR = word + " R-18";
+        const countR = await crawler.search(wordR, host);
+        await console.log(`${type} count of "${wordR}" = ${countR}`);
+        await console.log(`R-18 ratio = ${Math.round((countR / count) * 100)}% \n===========`)
+      }
     }
 
     // browser end
     await crawler.close();
 
     console.log("terminated.");
+    process.exit(1);
   })().catch(err => {
     console.log("ERROR!! ===============\n" + err);
+    process.exit(1);
   });
 };
 
 /**
- * CLI
+ * CLI commands
  */
 cli.command(
   "run",
   {
-    desc:
-      "Get CP seach result count on pixiv. Require search words setting of config.json file."
+    desc: "Get search result count on pixiv. Require search words setting of config.json file."
   },
   () => {
     search(config);

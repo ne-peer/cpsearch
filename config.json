@@ -1,8 +1,9 @@
 {
-    "type_novel": false,
-    "view_r_ratio": false,
-    "words": [
-        "a",
-        "b"
-    ]
+  "type_novel": false,
+  "view_r_ratio": false,
+  "account": {
+    "user": "",
+    "pw": ""
+  },
+  "words": ["AAA", "BBB"]
 }
