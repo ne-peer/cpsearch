@@ -50,9 +50,8 @@ const crawler = {
  */
 const scrapingResultCount = async html => {
   const $ = cheerio.load(html);
-  return $("span.count-badge")
-    .text()
-    .replace("件", "");
+  return $("span.kIiVfD")
+    .text();
 };
 
 /**
