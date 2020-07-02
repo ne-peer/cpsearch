@@ -1,3 +1,5 @@
+※2019年あたりのUI変更に対応していないため動きません
+
 # cpsearch
 
 Get CP seach result count on pixiv.
