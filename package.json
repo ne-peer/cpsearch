@@ -19,6 +19,6 @@
   "dependencies": {
     "cac": "^5.0.10",
     "cheerio": "^1.0.0-rc.2",
-    "puppeteer": "^1.6.2"
+    "puppeteer": "^1.13.0"
   }
 }
